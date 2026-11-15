@@ -17,7 +17,8 @@
     "lint": "eslint .",
     "lint:ext": "web-ext lint --source-dir .output/firefox-mv3",
     "check": "npm run compile && npm run lint && npm test && npm run build && npm run lint:ext",
-    "postinstall": "wxt prepare"
+    "postinstall": "wxt prepare",
+    "test:live": "vitest run --config vitest.live.config.ts"
   },
   "dependencies": {
     "preact": "^11.2.0"

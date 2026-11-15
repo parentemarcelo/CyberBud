@@ -19,7 +19,7 @@ describe('type → sources matrix (all keys set, all enabled)', () => {
     ['url', ['virustotal', 'urlhaus', 'threatfox']],
     ['sha256', ['virustotal', 'malwarebazaar', 'threatfox']],
     ['md5', ['virustotal', 'malwarebazaar', 'threatfox']],
-    ['sha1', ['virustotal', 'malwarebazaar']],
+    ['sha1', ['virustotal', 'malwarebazaar', 'threatfox']],
   ])('%s → %j', (type, expected) => {
     expect(ids(withKeys(), type)).toEqual(expected);
     expect(adaptersFor(ioc(type), withKeys()).placeholders).toEqual([]);
@@ -69,7 +69,8 @@ describe('placeholders', () => {
 
   it('unsupported sources are omitted, not placeholders', () => {
     const plan = adaptersFor(ioc('sha1'), defaultSettings());
-    expect(plan.placeholders.map((p) => p.source)).toEqual(['virustotal', 'malwarebazaar']);
+    expect(plan.placeholders.map((p) => p.source)).not.toContain('abuseipdb');
+    expect(plan.placeholders.map((p) => p.source)).toEqual(['virustotal', 'malwarebazaar', 'threatfox']);
   });
 
   it('passes the trimmed key for the right slot', () => {
