@@ -44,6 +44,7 @@ export const SOURCE_ZIP_INCLUDE = [
   'wxt.config.ts',
   'README.md',
   'PRIVACY.md',
+  'LICENSE*',
 ];
 export const SOURCE_ZIP_EXCLUDE = ['docs/**', '**/*KEYS*', '**/.env*', 'tests/**', 'coverage/**'];
 

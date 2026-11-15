@@ -2,18 +2,22 @@
 
 **Multi-source IOC reputation for security analysts, right in Firefox.**
 
-CyberBud makes life easier for security analysts and technical users. Check a URL, domain, IP address or file hash against several reputation sources at once, without jumping between tabs and copying IOCs around.
+CyberBud is a Firefox extension to make life easier for security analysts and technical users. It can check a URL, domain, IP address or file hash against several reputation sources at once, without jumping between tabs and copying IOCs around.
 
 - **One action, all sources:** paste into the popup or right-click → **Check reputation** on selected text, a link or the page.
-- **Sources:** VirusTotal, AbuseIPDB, and abuse.ch (URLhaus, MalwareBazaar, ThreatFox).
+- **Current sources:** VirusTotal, AbuseIPDB, and abuse.ch (URLhaus, MalwareBazaar, ThreatFox).
 - **Raw results, clearly summarised:** per-source cards with the key numbers ("12/94 engines", "87% confidence") and a link to each source's own page, plus a "N of M sources flag this" summary.
 - **Defanged input works:** `hxxps://evil[.]example`, `1[.]2[.]3[.]4`, `user[at]example[.]com`.
-- **Check files without uploading them:** drop a file to hash it locally (SHA-256 and SHA-1); only the hash is looked up. Optional prompt when a risky download finishes.
+- **Check files without uploading them:** drop a file to hash it locally (SHA-256 and SHA-1); only the hash is looked up. Optionally activate/disable prompt when a risky download finishes. Note: 'risky' is accessed by file type.
 - **Private by design:** everything runs in your browser with your own API keys. No server, no telemetry.
+
+
+Disclaimer: The extension was coded with support of AI (Claude Code).
+
 
 ## Who is it for?
 
-Technical users. CyberBud shows raw analysis from each source and needs your own API keys (BYOK, "bring your own keys"). All three are free.
+Technical users. CyberBud shows raw analysis from each source and needs your own API keys (BYOK, "bring your own keys"). All three current integrations allow for access to API keys with a free user account.
 
 ## Get your API keys
 
@@ -29,7 +33,7 @@ Open CyberBud's **Settings** (gear icon), paste each key, then **Save** and **Te
 
 - **Popup:** paste one or more IOCs (up to 20 at a time) and press Enter.
 - **Right-click:** select text (or right-click a link or page) → **Check reputation**.
-- **Files:** popup → *Check a file…* (opens a tab), then drop a file.
+- **Files:** popup → *Check a file…* (opens a new tab), then drag&drop a file, even from dowloads popup.
 - **Downloads:** when a risky file type finishes downloading, click the notification to check it.
 - **History:** the History tab lists past lookups. Click one to reopen it from cache.
 
