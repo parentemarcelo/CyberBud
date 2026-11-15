@@ -11,6 +11,11 @@ export default tseslint.config(
       globals: { ...globals.browser, ...globals.webextensions },
     },
     rules: {
+      // `_name` marks an intentionally unused variable (e.g. omitting fields via destructuring).
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        { argsIgnorePattern: '^_', varsIgnorePattern: '^_', ignoreRestSiblings: true },
+      ],
       // SPEC §9 S3/S4: no HTML injection, no eval.
       'no-eval': 'error',
       'no-implied-eval': 'error',

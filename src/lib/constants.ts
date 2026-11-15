@@ -10,6 +10,9 @@ export const REQUEST_TIMEOUT_MS = 15_000;
 /** Largest file hashed in-browser; the whole file is loaded into memory (SPEC F4). */
 export const MAX_FILE_SIZE_BYTES = 1024 ** 3; // 1 GiB
 
+/** Most history entries kept, regardless of retention (bounds storage use). */
+export const MAX_HISTORY_ENTRIES = 1_000;
+
 /** Higher number = worse. The summary verdict is the worst one (SPEC F3). */
 export const VERDICT_SEVERITY: Readonly<Record<Verdict, number>> = Object.freeze({
   unknown: 0,

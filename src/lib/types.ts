@@ -33,6 +33,10 @@ export type ParseResult =
 export const URL_PRIVACY_MODES = ['full', 'strip', 'domain'] as const;
 export type UrlPrivacyMode = (typeof URL_PRIVACY_MODES)[number];
 
+/** When the download prompt appears (SPEC F4). */
+export const DOWNLOAD_PROMPT_MODES = ['risky', 'always', 'off'] as const;
+export type DownloadPromptMode = (typeof DOWNLOAD_PROMPT_MODES)[number];
+
 // ---------- Sources and results ----------
 
 export const SOURCE_IDS = ['virustotal', 'abuseipdb', 'urlhaus', 'malwarebazaar', 'threatfox'] as const;
@@ -98,11 +102,14 @@ export interface SourceAdapter {
 }
 
 export interface ReportSummary {
+  /** Worst verdict among sources that answered; 'unknown' if none did. */
   verdict: Verdict;
   /** Sources with a malicious or suspicious verdict. */
   flagged: number;
   /** Sources that answered (status 'ok' or 'not_found'). */
   total: number;
+  /** Sources still 'loading' or 'queued'. 0 means the report is final. */
+  pending: number;
 }
 
 export interface IocReport {
