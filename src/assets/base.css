@@ -150,3 +150,12 @@ a { color: var(--accent); }
 .status-bad { color: var(--mal-fg); }
 .choice { display: flex; gap: 6px; align-items: flex-start; margin: 4px 0; }
 .notice { padding: 8px 10px; border-left: 3px solid var(--accent); background: var(--bg-soft); margin: 8px 0; }
+
+/* File check */
+.file-view { display: flex; flex-direction: column; gap: 10px; }
+.dropzone { border: 2px dashed var(--border); border-radius: var(--radius); padding: 28px 16px; text-align: center; cursor: pointer; background: var(--bg-soft); }
+.dropzone:hover, .dropzone.over { border-color: var(--accent); }
+.dropzone .muted { margin-top: 6px; }
+.hashes { grid-template-columns: max-content 1fr; }
+.paste-hash { margin-top: 6px; }
+.file-link { margin: 0 0 8px; }

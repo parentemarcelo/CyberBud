@@ -175,9 +175,21 @@ describe('App shell', () => {
     expect(screen.getByRole('button', { name: 'Open in a tab' })).toBeTruthy();
   });
 
-  it('tab mode has no "Open in a tab" button', () => {
+  it('tab mode has no "Open in a tab" button but has the Check file tab', () => {
     const f = fakeClient();
     render(<App mode="tab" clientFactory={() => f.client} />);
     expect(screen.queryByRole('button', { name: 'Open in a tab' })).toBeNull();
+    expect(screen.getByRole('tab', { name: 'Check file' })).toBeTruthy();
+  });
+
+  it('the popup has no File tab, only a link that opens it in a tab', () => {
+    const f = fakeClient();
+    const create = vi.spyOn(browser.tabs, 'create').mockResolvedValue({} as never);
+    vi.stubGlobal('close', vi.fn());
+    render(<App mode="popup" clientFactory={() => f.client} />);
+    expect(screen.queryByRole('tab', { name: 'Check file' })).toBeNull();
+    fireEvent.click(screen.getByRole('button', { name: 'Check a file…' }));
+    expect(create).toHaveBeenCalledWith({ url: expect.stringMatching(/\/app\.html#file$/) });
+    vi.unstubAllGlobals();
   });
 });

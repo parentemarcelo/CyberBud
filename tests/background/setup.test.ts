@@ -13,6 +13,8 @@ const DAY = 86_400_000;
 function stubConnect() {
   // fakeBrowser implements neither runtime ports nor context menus.
   vi.spyOn(browser.contextMenus.onClicked, 'addListener').mockImplementation(() => undefined);
+  vi.spyOn(browser.downloads.onChanged, 'addListener').mockImplementation(() => undefined);
+  vi.spyOn(browser.notifications.onClicked, 'addListener').mockImplementation(() => undefined);
   return vi.spyOn(browser.runtime.onConnect, 'addListener').mockImplementation(() => undefined);
 }
 
@@ -36,6 +38,13 @@ describe('setupBackground', () => {
     await vi.waitFor(() =>
       expect(create).toHaveBeenCalledWith({ id: 'cyberbud-check', title: 'Check reputation', contexts: ['selection', 'link', 'page'] }),
     );
+  });
+
+  it('registers the download and notification listeners', () => {
+    stubConnect();
+    setupBackground(async () => ({ drain: vi.fn() }) as unknown as Engine);
+    expect(browser.downloads.onChanged.addListener).toHaveBeenCalledTimes(1);
+    expect(browser.notifications.onClicked.addListener).toHaveBeenCalledTimes(1);
   });
 
   it('the drain alarm wakes the engine', async () => {

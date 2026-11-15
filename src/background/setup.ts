@@ -1,6 +1,7 @@
 // Background wiring. All listeners are registered synchronously at startup,
 // as MV3 event pages require (events that wake the page must find them).
 import { createContextMenu, handleMenuClick, type MenuClickInfo } from './contextMenu';
+import { handleDownloadChanged, handleNotificationClicked } from './downloads';
 import { DRAIN_ALARM, Engine, defaultDeps } from './engine';
 import { PURGE_ALARM, ensurePurgeAlarm, purge } from './maintenance';
 import { attachPort, type PortLike } from './messaging';
@@ -21,6 +22,12 @@ export function setupBackground(createEngine: () => Promise<Engine> = () => Engi
 
   browser.contextMenus.onClicked.addListener((info) => {
     void handleMenuClick(info as MenuClickInfo, engine);
+  });
+  browser.downloads.onChanged.addListener((delta) => {
+    void handleDownloadChanged(delta).catch(() => undefined);
+  });
+  browser.notifications.onClicked.addListener((id) => {
+    void handleNotificationClicked(id).catch(() => undefined);
   });
   browser.runtime.onInstalled.addListener(() => void createContextMenu().catch(() => undefined));
   browser.runtime.onStartup.addListener(() => void createContextMenu().catch(() => undefined));
