@@ -1,0 +1,5 @@
+{"query_status": "ok", "urlhaus_reference": "https://urlhaus.abuse.ch/host/evil.example/", "host": "evil.example", "firstseen": "2026-10-01 10:00:00 UTC", "url_count": "3", "blacklists": {"spamhaus_dbl": "not listed", "surbl": "listed"}, "urls": [
+  {"id": "1", "urlhaus_reference": "https://urlhaus.abuse.ch/url/1/", "url": "http://evil.example/a.exe", "url_status": "online", "date_added": "2026-10-01 10:00:00 UTC", "threat": "malware_download", "reporter": "r", "larted": "true", "takedown_time_seconds": null, "tags": ["exe", "AgentTesla"]},
+  {"id": "2", "urlhaus_reference": "https://urlhaus.abuse.ch/url/2/", "url": "http://evil.example/b.exe", "url_status": "offline", "date_added": "2026-10-02 10:00:00 UTC", "threat": "malware_download", "reporter": "r", "larted": "true", "takedown_time_seconds": 3600, "tags": ["exe"]},
+  {"id": "3", "urlhaus_reference": "https://urlhaus.abuse.ch/url/3/", "url": "http://evil.example/c.sh", "url_status": "online", "date_added": "2026-10-03 10:00:00 UTC", "threat": "malware_download", "reporter": "r", "larted": "false", "takedown_time_seconds": null, "tags": null}
+]}

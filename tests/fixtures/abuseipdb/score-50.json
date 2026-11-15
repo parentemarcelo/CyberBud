@@ -1,0 +1,1 @@
+{"data": {"ipAddress": "192.0.2.50", "isPublic": true, "ipVersion": 4, "isWhitelisted": false, "abuseConfidenceScore": 50, "countryCode": "DE", "usageType": "Data Center/Web Hosting/Transit", "isp": "Example Cloud GmbH", "domain": "example.de", "hostnames": [], "isTor": false, "totalReports": 14, "numDistinctUsers": 6, "lastReportedAt": "2026-11-14T22:00:00+00:00"}}

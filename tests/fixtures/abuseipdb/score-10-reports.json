@@ -1,0 +1,1 @@
+{"data": {"ipAddress": "198.51.100.10", "isPublic": true, "ipVersion": 4, "isWhitelisted": false, "abuseConfidenceScore": 10, "countryCode": "US", "usageType": "Fixed Line ISP", "isp": "Example Broadband", "domain": "example.com", "hostnames": ["host10.example.com"], "isTor": false, "totalReports": 2, "numDistinctUsers": 2, "lastReportedAt": "2026-11-01T08:15:00+00:00"}}

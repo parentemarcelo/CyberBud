@@ -1,0 +1,15 @@
+{"data": {"attributes": {
+  "as_owner": "Example Hosting GmbH",
+  "asn": 6724,
+  "continent": "EU",
+  "country": "DE",
+  "network": "81.169.128.0/17",
+  "regional_internet_registry": "RIPE NCC",
+  "last_analysis_date": 1763200000,
+  "last_analysis_stats": {"harmless": 62, "malicious": 0, "suspicious": 0, "timeout": 0, "undetected": 28},
+  "reputation": 0,
+  "tags": [],
+  "total_votes": {"harmless": 1, "malicious": 0}
+}, "id": "81.169.145.1",
+   "links": {"self": "https://www.virustotal.com/api/v3/ip_addresses/81.169.145.1"},
+   "type": "ip_address"}}

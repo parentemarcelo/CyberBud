@@ -1,0 +1,13 @@
+{"data": {"attributes": {
+  "url": "http://www.somedomain.com/this/is/my/url",
+  "last_final_url": "http://www.somedomain.com/landing",
+  "title": "Login",
+  "last_http_response_code": 200,
+  "first_submission_date": 1700000000,
+  "last_analysis_date": 1763200000,
+  "last_analysis_stats": {"harmless": 60, "malicious": 1, "suspicious": 1, "timeout": 0, "undetected": 30},
+  "reputation": -5,
+  "total_votes": {"harmless": 0, "malicious": 2}
+}, "id": "1db0ad7dbcec0676710ea0eaacd35d5e471d3e11944d53bcbd31f0cbd11bce31",
+   "links": {"self": "https://www.virustotal.com/api/v3/urls/1db0ad7dbcec0676710ea0eaacd35d5e471d3e11944d53bcbd31f0cbd11bce31"},
+   "type": "url"}}

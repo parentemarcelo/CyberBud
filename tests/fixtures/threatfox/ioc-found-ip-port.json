@@ -1,0 +1,5 @@
+{"query_status": "ok", "data": [
+  {"id": "100", "ioc": "11.2.3.45:443", "threat_type": "botnet_cc", "threat_type_desc": "Botnet C&C", "ioc_type": "ip:port", "malware_printable": "Other", "confidence_level": 100, "first_seen": "2026-11-01 12:00:00 UTC", "tags": null},
+  {"id": "101", "ioc": "1.2.3.4:8080", "threat_type": "botnet_cc", "threat_type_desc": "Botnet C&C", "ioc_type": "ip:port", "ioc_type_desc": "ip:port combination that is used for botnet Command&control (C&C)", "malware_printable": "Cobalt Strike", "confidence_level": 50, "first_seen": "2026-11-02 12:00:00 UTC", "tags": ["CobaltStrike"]},
+  {"id": "102", "ioc": "1.2.3.4:443", "threat_type": "botnet_cc", "threat_type_desc": "Botnet C&C", "ioc_type": "ip:port", "malware_printable": "Cobalt Strike", "confidence_level": 90, "first_seen": "2026-11-03 12:00:00 UTC", "tags": ["CobaltStrike", "c2"]}
+]}

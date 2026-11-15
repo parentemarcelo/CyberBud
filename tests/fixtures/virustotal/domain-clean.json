@@ -1,0 +1,14 @@
+{"data": {"attributes": {
+  "categories": {"Dr.Web": "known infection source", "Forcepoint ThreatSeeker": "bot networks. parked domain"},
+  "creation_date": 1106675546,
+  "last_analysis_date": 1671691600,
+  "last_analysis_stats": {"harmless": 3, "malicious": 0, "suspicious": 0, "timeout": 0, "undetected": 0},
+  "last_dns_records": [{"ttl": 1162, "type": "A", "value": "91.117.116.8"}],
+  "last_dns_records_date": 1591833767,
+  "registrar": "MarkMonitor Inc.",
+  "reputation": 0,
+  "tags": ["dga"],
+  "total_votes": {"harmless": 0, "malicious": 0}
+}, "id": "foo.fooapis.com",
+   "links": {"self": "https://www.virustotal.com/api/v3/domains/foo.fooapis.com"},
+   "type": "domain"}}
