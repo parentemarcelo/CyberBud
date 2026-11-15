@@ -4,6 +4,12 @@ import type { RateLimit, SourceId, Verdict } from './types';
 /** Max IOCs looked up per batch; extras are reported as skipped (SPEC F1). */
 export const MAX_BATCH_SIZE = 20;
 
+/** Longest lookup text accepted from the UI (a large paste is still far below this). */
+export const MAX_INPUT_CHARS = 200_000;
+
+/** Attempts per source request when the server answers HTTP 429. */
+export const MAX_REQUEST_ATTEMPTS = 3;
+
 /** Per-request timeout before a source result becomes an error (SPEC F6). */
 export const REQUEST_TIMEOUT_MS = 15_000;
 

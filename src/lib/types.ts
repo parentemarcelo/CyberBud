@@ -122,11 +122,19 @@ export interface IocReport {
 
 export type LookupOrigin = 'popup' | 'context_menu' | 'file';
 
+export const LOOKUP_ORIGINS = ['popup', 'context_menu', 'file'] as const satisfies readonly LookupOrigin[];
+
 export type RequestMessage =
   | { type: 'lookup'; text: string; origin: LookupOrigin }
   | { type: 'refresh'; ioc: Ioc; source?: SourceId }
-  | { type: 'lookupHash'; sha256: string; origin: 'file' };
+  | { type: 'lookupHash'; sha256: string; origin: 'file' }
+  | { type: 'getState' };
 
 export type ResponseMessage =
+  /** Result of parsing a lookup; becomes the current view. */
   | { type: 'parsed'; items: ParseResult[] }
-  | { type: 'report'; report: IocReport };
+  /** A report was created or one of its sources changed. */
+  | { type: 'report'; report: IocReport }
+  /** Current view, sent on connect and on getState. */
+  | { type: 'state'; items: ParseResult[]; reports: IocReport[] }
+  | { type: 'error'; message: string };
