@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { parseVt, virustotal, vtEndpoint, vtLink, vtUrlId, vtVerdict } from '../../src/lib/sources/virustotal';
+import { parseVt, virustotal, vtEndpoint, vtHeadline, vtLink, vtUrlId, vtVerdict } from '../../src/lib/sources/virustotal';
 import type { Ioc } from '../../src/lib/types';
 import { jsonResponse, mockFetch } from '../helpers/fetch';
 import { fixture } from '../helpers/fixtures';
@@ -44,12 +44,21 @@ describe('verdict rules (SPEC F3)', () => {
     [s(3), 'malicious'],
     [s(12, 0, 50, 20), 'malicious'],
     [s(2, 0, 60), 'suspicious'],
-    [s(1, 0, 60), 'suspicious'],
-    [s(0, 1, 60), 'suspicious'],
+    [s(1, 1, 60), 'suspicious'],
+    [s(0, 2, 60), 'suspicious'],
+    [s(2, 5, 60), 'suspicious'], // many "suspicious" engines never make it malicious
+    [s(1, 0, 91), 'clean'], // single detection is noise (e.g. google.com, 8.8.8.8)
+    [s(0, 1, 91), 'clean'],
     [s(0, 0, 60, 30), 'clean'],
     [s(0, 0, 0, 0), 'unknown'],
   ] as const)('%j → %s', (stats, verdict) => {
     expect(vtVerdict(stats)).toBe(verdict);
+  });
+
+  it('the headline always shows the raw detections', () => {
+    expect(vtHeadline(s(1, 0, 91))).toBe('1/92 engines');
+    expect(vtHeadline(s(0, 1, 91))).toBe('0/92 engines · 1 suspicious');
+    expect(vtHeadline(s(12, 0, 50, 20))).toBe('12/82 engines');
   });
 });
 
@@ -86,7 +95,7 @@ describe('fixtures → SourceResult', () => {
 
   it('suspicious URL links to the GUI by the returned id', () => {
     const r = parseVt(urlIoc, fixture('virustotal', 'url-suspicious'));
-    expect(r).toMatchObject({ status: 'ok', verdict: 'suspicious', headline: '1/92 engines' });
+    expect(r).toMatchObject({ status: 'ok', verdict: 'suspicious', headline: '1/92 engines · 1 suspicious' });
     expect(r.link).toBe('https://www.virustotal.com/gui/url/1db0ad7dbcec0676710ea0eaacd35d5e471d3e11944d53bcbd31f0cbd11bce31');
     expect(r.details).toEqual(expect.arrayContaining([['Final URL', 'http://www.somedomain.com/landing']]));
   });

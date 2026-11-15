@@ -31,12 +31,8 @@ describe('VERDICT_SEVERITY', () => {
 });
 
 describe('VERDICT_THRESHOLDS (SPEC F3)', () => {
-  it('VirusTotal: >=3 malicious, 1-2 malicious or >=1 suspicious = suspicious', () => {
-    expect(VERDICT_THRESHOLDS.virustotal).toEqual({
-      maliciousMin: 3,
-      suspiciousMaliciousMin: 1,
-      suspiciousMin: 1,
-    });
+  it('VirusTotal: >=3 malicious = malicious, >=2 detections (malicious + suspicious) = suspicious', () => {
+    expect(VERDICT_THRESHOLDS.virustotal).toEqual({ maliciousMin: 3, suspiciousDetectionsMin: 2 });
   });
 
   it('AbuseIPDB: >=75 malicious, 25-74 suspicious', () => {
@@ -45,7 +41,7 @@ describe('VERDICT_THRESHOLDS (SPEC F3)', () => {
 
   it('keeps suspicious thresholds below malicious ones', () => {
     const { virustotal: vt, abuseipdb: ab } = VERDICT_THRESHOLDS;
-    expect(vt.suspiciousMaliciousMin).toBeLessThan(vt.maliciousMin);
+    expect(vt.suspiciousDetectionsMin).toBeLessThan(vt.maliciousMin);
     expect(ab.suspiciousMin).toBeLessThan(ab.maliciousMin);
   });
 });

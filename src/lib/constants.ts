@@ -30,10 +30,12 @@ export const VERDICT_THRESHOLDS = Object.freeze({
   virustotal: Object.freeze({
     /** malicious engines >= this → malicious */
     maliciousMin: 3,
-    /** malicious engines >= this (but below maliciousMin) → suspicious */
-    suspiciousMaliciousMin: 1,
-    /** suspicious engines >= this → suspicious */
-    suspiciousMin: 1,
+    /**
+     * detections (malicious + suspicious engines) >= this → suspicious.
+     * A single detection is common noise on popular domains/IPs, so it stays
+     * "clean"; the headline still shows the raw count (e.g. "1/92 engines").
+     */
+    suspiciousDetectionsMin: 2,
   }),
   abuseipdb: Object.freeze({
     /** abuseConfidenceScore >= this → malicious */

@@ -36,13 +36,19 @@ export function vtVerdict(stats: VtStats | undefined): Verdict {
   if (!stats) return 'unknown';
   const t = VERDICT_THRESHOLDS.virustotal;
   if (stats.malicious >= t.maliciousMin) return 'malicious';
-  if (stats.malicious >= t.suspiciousMaliciousMin || stats.suspicious >= t.suspiciousMin) return 'suspicious';
+  if (stats.malicious + stats.suspicious >= t.suspiciousDetectionsMin) return 'suspicious';
   return engines(stats) > 0 ? 'clean' : 'unknown';
 }
 
 /** Engines that gave a verdict (timeouts, failures and unsupported types are not counted). */
 function engines(s: VtStats): number {
   return s.malicious + s.suspicious + s.harmless + s.undetected;
+}
+
+/** "12/94 engines", plus suspicious engines when any (so "0/92" never hides a detection). */
+export function vtHeadline(s: VtStats): string {
+  const base = `${s.malicious}/${engines(s)} engines`;
+  return s.suspicious > 0 ? `${base} · ${s.suspicious} suspicious` : base;
 }
 
 /** VT URL identifier: unpadded URL-safe base64 of the URL (RFC 4648 §5). */
@@ -97,7 +103,7 @@ export function parseVt(ioc: Ioc, json: unknown): SourceResult {
 
   const stats = parseStats(attrs.last_analysis_stats);
   const verdict = vtVerdict(stats);
-  const headline = stats ? `${stats.malicious}/${engines(stats)} engines` : 'Not analysed yet';
+  const headline = stats ? vtHeadline(stats) : 'Not analysed yet';
   const votes = isRecord(attrs.total_votes) ? attrs.total_votes : {};
   const common = rows(
     ['Malicious', stats?.malicious],
