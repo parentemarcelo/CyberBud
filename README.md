@@ -8,7 +8,7 @@ CyberBud is a Firefox extension to make life easier for security analysts and te
 - **Current sources:** VirusTotal, AbuseIPDB, and abuse.ch (URLhaus, MalwareBazaar, ThreatFox).
 - **Raw results, clearly summarised:** per-source cards with the key numbers ("12/94 engines", "87% confidence") and a link to each source's own page, plus a "N of M sources flag this" summary.
 - **Defanged input works:** `hxxps://evil[.]example`, `1[.]2[.]3[.]4`, `user[at]example[.]com`.
-- **Check files without uploading them:** drop a file to hash it locally (SHA-256 and SHA-1); only the hash is looked up. Optionally activate/disable prompt when a risky download finishes. Note: 'risky' is accessed by file type.
+- **Check files without uploading them:** drop a file to hash it locally (SHA-256 and SHA-1); only the hash is looked up. Optionally activate/disable prompt when a risky download finishes. Note: 'risky' is assessed by file type.
 - **Private by design:** everything runs in your browser with your own API keys. No server, no telemetry.
 
 
@@ -33,7 +33,7 @@ Open CyberBud's **Settings** (gear icon), paste each key, then **Save** and **Te
 
 - **Popup:** paste one or more IOCs (up to 20 at a time) and press Enter.
 - **Right-click:** select text (or right-click a link or page) → **Check reputation**.
-- **Files:** popup → *Check a file…* (opens a new tab), then drag&drop a file, even from dowloads popup.
+- **Files:** popup → *Check a file…* (opens a new tab), then drag&drop a file, even from downloads popup.
 - **Downloads:** when a risky file type finishes downloading, click the notification to check it.
 - **History:** the History tab lists past lookups. Click one to reopen it from cache.
 
