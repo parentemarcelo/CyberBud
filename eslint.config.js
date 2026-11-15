@@ -4,6 +4,8 @@ import globals from 'globals';
 
 export default tseslint.config(
   { ignores: ['.output/', '.wxt/', 'node_modules/', 'web-ext-artifacts/', 'coverage/'] },
+  // Build/maintenance scripts run in Node, not the browser.
+  { files: ['scripts/**'], languageOptions: { globals: { ...globals.node } } },
   js.configs.recommended,
   ...tseslint.configs.recommended,
   {

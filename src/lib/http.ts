@@ -12,7 +12,10 @@ export interface HttpRequest {
   method?: 'GET' | 'POST';
   headers?: Record<string, string>;
   body?: string | URLSearchParams;
-  /** Values that must never appear in error messages (API keys). */
+  /**
+   * Values that must never appear in error messages (API keys). Messages are
+   * fixed strings today; `redact` guards any future message built from data.
+   */
   secrets?: readonly string[];
   signal?: AbortSignal;
   timeoutMs?: number;
@@ -34,13 +37,12 @@ export const MESSAGES = {
   unauthorized: 'Invalid or unauthorized key',
   timeout: `Timed out after ${REQUEST_TIMEOUT_MS / 1000} s`,
   cancelled: 'Cancelled',
-  network: 'Network error',
+  network: 'Network error, check your connection',
   badJson: 'Unexpected response',
   tooLarge: 'Response too large',
 } as const;
 
 export async function requestJson(req: HttpRequest): Promise<HttpOutcome> {
-  const secrets = req.secrets ?? [];
   const timeout = new AbortController();
   const timer = setTimeout(() => timeout.abort(), req.timeoutMs ?? REQUEST_TIMEOUT_MS);
   const signal = req.signal ? AbortSignal.any([req.signal, timeout.signal]) : timeout.signal;
@@ -58,21 +60,23 @@ export async function requestJson(req: HttpRequest): Promise<HttpOutcome> {
       // APIs don't redirect; never follow one somewhere else.
       redirect: 'error',
     });
-  } catch (err) {
+  } catch {
     clearTimeout(timer);
     if (req.signal?.aborted) return { kind: 'error', message: MESSAGES.cancelled };
     if (timeout.signal.aborted) return { kind: 'error', message: MESSAGES.timeout };
-    return { kind: 'error', message: redact(`${MESSAGES.network}: ${errorText(err)}`, secrets) };
+    // The browser's detail ("NetworkError when attempting…") isn't useful to
+    // users, and leaving it out means no outside text ever reaches a message.
+    return { kind: 'error', message: MESSAGES.network };
   }
 
   let text: string;
   try {
     text = await res.text();
-  } catch (err) {
+  } catch {
     clearTimeout(timer);
     if (req.signal?.aborted) return { kind: 'error', message: MESSAGES.cancelled };
     if (timeout.signal.aborted) return { kind: 'error', message: MESSAGES.timeout };
-    return { kind: 'error', status: res.status, message: redact(`${MESSAGES.network}: ${errorText(err)}`, secrets) };
+    return { kind: 'error', status: res.status, message: MESSAGES.network };
   }
   clearTimeout(timer);
 
@@ -125,6 +129,3 @@ function parseJson(text: string): unknown {
   }
 }
 
-function errorText(err: unknown): string {
-  return err instanceof Error ? err.message : String(err);
-}

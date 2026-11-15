@@ -1,4 +1,5 @@
-import { useState } from 'preact/hooks';
+import { useEffect, useRef, useState } from 'preact/hooks';
+import { getSettings, subscribeSettings, type Settings } from '../lib/settings';
 import type { LookupClient } from './client';
 import { FileView } from './components/FileView';
 import { HistoryView } from './components/HistoryView';
@@ -28,7 +29,23 @@ export function App({ mode, clientFactory }: { mode: 'popup' | 'tab'; clientFact
     if (mode === 'popup') window.close();
   };
 
+  const noKeys = useNoKeys();
+  const tabRefs = useRef<Partial<Record<Tab, HTMLButtonElement | null>>>({});
   const openSettings = () => void browser.runtime.openOptionsPage();
+  // ARIA tabs pattern: arrows/Home/End move between tabs.
+  const onTabKey = (e: KeyboardEvent) => {
+    const i = tabs.indexOf(tab);
+    const next =
+      e.key === 'ArrowRight' ? tabs[(i + 1) % tabs.length]
+      : e.key === 'ArrowLeft' ? tabs[(i - 1 + tabs.length) % tabs.length]
+      : e.key === 'Home' ? tabs[0]
+      : e.key === 'End' ? tabs[tabs.length - 1]
+      : undefined;
+    if (!next) return;
+    e.preventDefault();
+    setTab(next);
+    tabRefs.current[next]?.focus();
+  };
   const openInTab = () => {
     void browser.tabs.create({ url: browser.runtime.getURL('/app.html') });
     if (mode === 'popup') window.close();
@@ -47,14 +64,18 @@ export function App({ mode, clientFactory }: { mode: 'popup' | 'tab'; clientFact
           ⚙
         </button>
       </header>
-      <nav class="tabs" role="tablist">
+      <nav class="tabs" role="tablist" aria-label="Views" onKeyDown={onTabKey}>
         {tabs.map((t) => (
           <button
             key={t}
             type="button"
             role="tab"
             id={`tab-${t}`}
+            ref={(el) => {
+              tabRefs.current[t] = el;
+            }}
             class="tab-btn"
+            tabIndex={tab === t ? 0 : -1}
             aria-selected={tab === t}
             aria-controls="panel"
             onClick={() => setTab(t)}
@@ -64,6 +85,14 @@ export function App({ mode, clientFactory }: { mode: 'popup' | 'tab'; clientFact
         ))}
       </nav>
       <div class="panel" role="tabpanel" id="panel" aria-labelledby={`tab-${tab}`}>
+        {noKeys && tab !== 'history' && (
+          <div class="banner info" role="note">
+            <strong>Welcome to CyberBud.</strong> Add at least one API key to start checking.{' '}
+            <button type="button" class="btn primary" onClick={openSettings}>
+              Open Settings
+            </button>
+          </div>
+        )}
         {tab === 'lookup' && (
           <>
             {mode === 'popup' && (
@@ -90,4 +119,15 @@ export function App({ mode, clientFactory }: { mode: 'popup' | 'tab'; clientFact
       </div>
     </div>
   );
+}
+
+/** True when no API key is set (first run), kept in sync with settings. */
+function useNoKeys(): boolean {
+  const [noKeys, setNoKeys] = useState(false);
+  useEffect(() => {
+    const apply = (s: Settings) => setNoKeys(Object.values(s.keys).every((k) => k.trim() === ''));
+    void getSettings().then(apply, () => undefined);
+    return subscribeSettings(apply);
+  }, []);
+  return noKeys;
 }

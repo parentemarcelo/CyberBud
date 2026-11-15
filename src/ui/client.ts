@@ -13,6 +13,10 @@ export interface ViewState {
 }
 
 type Listener = (state: ViewState) => void;
+
+const MAX_RETRIES = 5;
+export const UNREACHABLE =
+  "Can't reach CyberBud's background. Close and reopen this window; if it keeps happening, reload CyberBud in about:addons.";
 type MessageListener = (msg: ResponseMessage) => void;
 
 export interface PortFactory {
@@ -39,9 +43,11 @@ export class LookupClient {
       this.port = undefined;
       this.set({ connected: false });
       // The event page may have been restarted: reconnect a few times.
-      if (!this.closed && this.retries < 5) {
+      if (!this.closed && this.retries < MAX_RETRIES) {
         this.retries++;
         setTimeout(() => this.connect(), 300 * this.retries);
+      } else if (!this.closed) {
+        this.set({ error: UNREACHABLE });
       }
     });
     for (const m of this.outbox.splice(0)) port.postMessage(m);

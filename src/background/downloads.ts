@@ -39,7 +39,8 @@ export const defaultDownloadDeps: DownloadDeps = {
       type: 'basic',
       title,
       message,
-      iconUrl: browser.runtime.getURL('/icon.svg'),
+      // PNG: not every system notification service renders SVG.
+      iconUrl: browser.runtime.getURL('/icon-96.png'),
     }),
 };
 

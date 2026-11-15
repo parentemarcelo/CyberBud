@@ -50,6 +50,11 @@ export function SourceCard({ r, now, actions }: { r: SourceResult; now: number; 
             Add key in Settings
           </button>
         )}
+        {r.status === 'error' && r.error === 'Invalid or unauthorized key' && (
+          <button type="button" class="btn link" onClick={actions.onOpenSettings}>
+            Check key in Settings
+          </button>
+        )}
         {r.status === 'disabled' && (
           <button type="button" class="btn link" onClick={actions.onOpenSettings}>
             Settings

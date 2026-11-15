@@ -42,3 +42,20 @@ describe('manifest permissions', () => {
     expect(gecko.data_collection_permissions?.required).toEqual(['browsingActivity', 'websiteContent']);
   });
 });
+
+describe('packaging', () => {
+  it('the AMO source zip is an allowlist that never includes docs/ or key files', async () => {
+    const { SOURCE_ZIP_INCLUDE, SOURCE_ZIP_EXCLUDE } = await import('../wxt.config');
+    const zip = (config as { zip?: { includeSources?: string[]; excludeSources?: string[]; dotSources?: boolean } }).zip;
+    expect(zip?.includeSources).toEqual(SOURCE_ZIP_INCLUDE);
+    expect(SOURCE_ZIP_INCLUDE.some((p) => p.startsWith('docs'))).toBe(false);
+    expect(SOURCE_ZIP_EXCLUDE).toEqual(expect.arrayContaining(['docs/**', '**/*KEYS*', '**/.env*']));
+    expect(zip?.dotSources).toBe(false);
+  });
+
+  it('has PNG icons up to 128 px for AMO and notifications', () => {
+    const icons = (config.manifest as { icons: Record<string, string> }).icons;
+    expect(icons['128']).toBe('icon-128.png');
+    expect(Object.values(icons).every((f) => f.endsWith('.png'))).toBe(true);
+  });
+});

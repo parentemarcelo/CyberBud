@@ -16,9 +16,13 @@
     "test:watch": "vitest",
     "lint": "eslint .",
     "lint:ext": "web-ext lint --source-dir .output/firefox-mv3",
-    "check": "npm run compile && npm run lint && npm test && npm run build && npm run lint:ext",
+    "check": "npm run compile && npm run lint && npm test && npm run build && npm run lint:ext && npm run check:bundle",
     "postinstall": "wxt prepare",
-    "test:live": "vitest run --config vitest.live.config.ts"
+    "test:live": "vitest run --config vitest.live.config.ts",
+    "sign": "web-ext sign --channel=unlisted --source-dir .output/firefox-mv3 --upload-source-code .output/cyberbud-$npm_package_version-sources.zip --artifacts-dir web-ext-artifacts",
+    "package": "npm run check && npm run zip",
+    "audit:runtime": "npm audit --omit=dev",
+    "check:bundle": "node scripts/check-bundle.mjs"
   },
   "dependencies": {
     "preact": "^11.2.0"
