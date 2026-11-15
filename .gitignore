@@ -68,3 +68,8 @@ temp/
 
 # Documentation
 docs/
+
+# WXT / web-ext
+.output/
+.wxt/
+web-ext-artifacts/
