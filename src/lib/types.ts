@@ -26,6 +26,13 @@ export type ParseResult =
   /** Valid IOC beyond the batch limit (SPEC F1: "skipped (limit 20)"). */
   | { kind: 'skipped'; raw: string };
 
+/**
+ * What part of a URL is sent (SPEC F1): the full URL, the URL without query
+ * string, or only its host. The fragment is never sent in any mode.
+ */
+export const URL_PRIVACY_MODES = ['full', 'strip', 'domain'] as const;
+export type UrlPrivacyMode = (typeof URL_PRIVACY_MODES)[number];
+
 // ---------- Sources and results ----------
 
 export const SOURCE_IDS = ['virustotal', 'abuseipdb', 'urlhaus', 'malwarebazaar', 'threatfox'] as const;
