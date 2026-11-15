@@ -359,3 +359,44 @@ it('Engine.create uses defaults without throwing (fakeBrowser)', async () => {
   const e = await Engine.create();
   expect(e.getState()).toEqual({ items: [], reports: [] });
 });
+
+describe('open, testKey, clear (UI support)', () => {
+  it('open serves a fresh cached result without calling the adapter', async () => {
+    useClock();
+    const vt = fakeAdapter('virustotal');
+    const h = await makeEngine([vt.adapter]);
+    await h.engine.lookup('evil.example other.example', 'popup');
+    await h.engine.open(dom('evil.example'));
+    expect(vt.lookup).toHaveBeenCalledTimes(2);
+    expect(h.engine.getState().items).toEqual([{ kind: 'ioc', ioc: dom('evil.example') }]);
+    expect(h.engine.getState().reports[0]!.results[0]!.fromCache).toBe(true);
+  });
+
+  it('testKey uses the slot adapter and respects the rate limit', async () => {
+    useClock();
+    const vt = fakeAdapter('virustotal');
+    const h = await makeEngine([vt.adapter]);
+    expect(await h.engine.testKey('vt', 'k')).toBe('ok');
+    expect(vt.adapter.testKey).toHaveBeenCalledWith('k', expect.anything());
+    await h.engine.lookup('a.example b.example c.example', 'popup'); // 3 + 1 test = 4 per minute
+    expect(await h.engine.testKey('vt', 'k')).toBe('busy');
+  });
+
+  it('testKey: a throwing adapter → error', async () => {
+    const vt = fakeAdapter('virustotal');
+    vi.mocked(vt.adapter.testKey).mockRejectedValueOnce(new Error('x'));
+    const h = await makeEngine([vt.adapter]);
+    expect(await h.engine.testKey('vt', 'k')).toBe('error');
+  });
+
+  it('clearCache and clearHistory', async () => {
+    const vt = fakeAdapter('virustotal');
+    const h = await makeEngine([vt.adapter]);
+    await h.engine.lookup('evil.example', 'popup');
+    await h.engine.clearHistory();
+    await h.engine.clearCache();
+    expect(await listHistory()).toEqual([]);
+    await h.engine.lookup('evil.example', 'popup');
+    expect(vt.lookup).toHaveBeenCalledTimes(2);
+  });
+});

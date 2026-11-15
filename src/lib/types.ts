@@ -90,6 +90,8 @@ export interface RateLimit {
 }
 
 export type KeyTestResult = 'ok' | 'invalid' | 'error';
+/** Key test as seen by the UI: 'busy' when the source's rate limit is reached. */
+export type KeyTestOutcome = KeyTestResult | 'busy';
 
 export interface SourceAdapter {
   id: SourceId;
@@ -128,6 +130,11 @@ export type RequestMessage =
   | { type: 'lookup'; text: string; origin: LookupOrigin }
   | { type: 'refresh'; ioc: Ioc; source?: SourceId }
   | { type: 'lookupHash'; sha256: string; origin: 'file' }
+  /** Reopen one IOC (e.g. from history): served from cache when fresh, otherwise re-run. */
+  | { type: 'open'; ioc: Ioc }
+  | { type: 'testKey'; keyId: KeyId; apiKey: string }
+  | { type: 'clearCache' }
+  | { type: 'clearHistory' }
   | { type: 'getState' };
 
 export type ResponseMessage =
@@ -137,4 +144,6 @@ export type ResponseMessage =
   | { type: 'report'; report: IocReport }
   /** Current view, sent on connect and on getState. */
   | { type: 'state'; items: ParseResult[]; reports: IocReport[] }
+  | { type: 'keyTest'; keyId: KeyId; result: KeyTestOutcome }
+  | { type: 'cleared'; what: 'cache' | 'history' }
   | { type: 'error'; message: string };

@@ -4,18 +4,20 @@
 // history. Queue, limiter and current reports are persisted to
 // storage.session so a suspended event page or a reopened popup can resume.
 // API keys are never persisted: queued jobs read them from settings when they run.
-import { getCached, invalidate, putCached, ttlMs } from '../lib/cache';
+import { clearCache, getCached, invalidate, putCached, ttlMs } from '../lib/cache';
 import { MAX_REQUEST_ATTEMPTS } from '../lib/constants';
-import { addHistory } from '../lib/history';
+import { addHistory, clearHistory } from '../lib/history';
 import { parseInput } from '../lib/ioc/parse';
 import { RateLimiter, RequestQueue, WINDOW_MS, type RateLimiterState, type RequestQueueState } from '../lib/ratelimit';
 import { getSettings, type Settings } from '../lib/settings';
 import { errorResult, result } from '../lib/sources/common';
-import { adaptersFor as defaultAdaptersFor } from '../lib/sources/registry';
+import { ADAPTERS, adaptersFor as defaultAdaptersFor } from '../lib/sources/registry';
 import {
   SOURCE_IDS,
   type Ioc,
   type IocReport,
+  type KeyId,
+  type KeyTestOutcome,
   type LookupOrigin,
   type ParseResult,
   type ResponseMessage,
@@ -47,6 +49,8 @@ export interface EngineState {
 export interface EngineDeps {
   getSettings: () => Promise<Settings>;
   adaptersFor: typeof defaultAdaptersFor;
+  /** Adapter used to test a key slot (one request). */
+  keyTestAdapter: (keyId: KeyId) => SourceAdapter;
   now: () => number;
   loadState: () => Promise<unknown>;
   saveState: (state: EngineState) => Promise<void>;
@@ -58,6 +62,7 @@ export function defaultDeps(): EngineDeps {
   return {
     getSettings,
     adaptersFor: defaultAdaptersFor,
+    keyTestAdapter: (keyId) => (keyId === 'vt' ? ADAPTERS.virustotal : keyId === 'abuseipdb' ? ADAPTERS.abuseipdb : ADAPTERS.urlhaus),
     now: () => Date.now(),
     loadState: async () => (await browser.storage.session.get(SESSION_KEY))[SESSION_KEY],
     saveState: (state) => browser.storage.session.set({ [SESSION_KEY]: state }),
@@ -137,6 +142,35 @@ export class Engine {
     const settings = await this.deps.getSettings();
     await this.runIoc(ioc, 'popup', settings, { bypassCache: true, ...(source && { only: source }) });
     this.afterChange();
+  }
+
+  /** Show one IOC (e.g. from history): cached results when fresh, otherwise re-run. */
+  async open(ioc: Ioc): Promise<void> {
+    const settings = await this.deps.getSettings();
+    this.setItems([{ kind: 'ioc', ioc }]);
+    await this.runIoc(ioc, 'popup', settings, {});
+    this.afterChange();
+  }
+
+  /** Test an API key with one request, counted against the source's rate limit. */
+  async testKey(keyId: KeyId, apiKey: string): Promise<KeyTestOutcome> {
+    const adapter = this.deps.keyTestAdapter(keyId);
+    if (this.queue.list().some((j) => j.source === adapter.id)) return 'busy';
+    if (this.limiter.acquire(adapter.id, this.deps.now()).kind !== 'now') return 'busy';
+    this.persist();
+    try {
+      return await adapter.testKey(apiKey, new AbortController().signal);
+    } catch {
+      return 'error';
+    }
+  }
+
+  async clearCache(): Promise<void> {
+    await clearCache();
+  }
+
+  async clearHistory(): Promise<void> {
+    await clearHistory();
   }
 
   /** Run every queued job that the rate limiter now allows. */

@@ -63,6 +63,7 @@ export async function makeEngine(
         .filter((a) => !s.enabledSources[a.id] || s.keys[a.keyId] === '')
         .map((a) => result(a.id, _ioc, { status: s.enabledSources[a.id] ? 'no_key' : 'disabled', headline: '' })),
     }),
+    keyTestAdapter: (keyId) => adapters.find((a) => a.keyId === keyId) ?? adapters[0]!,
     now: () => Date.now(),
     loadState: async () => opts.initialState,
     saveState: async (st) => {

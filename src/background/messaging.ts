@@ -5,9 +5,11 @@
 import { MAX_INPUT_CHARS } from '../lib/constants';
 import { parseInput } from '../lib/ioc/parse';
 import {
+  KEY_IDS,
   LOOKUP_ORIGINS,
   SOURCE_IDS,
   type Ioc,
+  type KeyId,
   type LookupOrigin,
   type RequestMessage,
   type ResponseMessage,
@@ -79,6 +81,20 @@ export function attachPort(port: PortLike, engine: Promise<Engine>, extensionId:
         case 'refresh':
           await e.refresh(msg.ioc, msg.source);
           break;
+        case 'open':
+          await e.open(msg.ioc);
+          break;
+        case 'testKey':
+          post({ type: 'keyTest', keyId: msg.keyId, result: await e.testKey(msg.keyId, msg.apiKey) });
+          break;
+        case 'clearCache':
+          await e.clearCache();
+          post({ type: 'cleared', what: 'cache' });
+          break;
+        case 'clearHistory':
+          await e.clearHistory();
+          post({ type: 'cleared', what: 'history' });
+          break;
         case 'getState':
           post({ type: 'state', ...e.getState() });
           break;
@@ -107,6 +123,19 @@ export function validateRequest(raw: unknown): RequestMessage | null {
       if (!ioc) return null;
       return { type: 'refresh', ioc, ...(m.source !== undefined && { source: m.source as SourceId }) };
     }
+    case 'open': {
+      const ioc = validIoc(m.ioc);
+      return ioc ? { type: 'open', ioc } : null;
+    }
+    case 'testKey':
+      if (!(KEY_IDS as readonly unknown[]).includes(m.keyId)) return null;
+      // API keys are printable ASCII (they go into an HTTP header).
+      if (typeof m.apiKey !== 'string' || !/^[\x21-\x7e]{1,512}$/.test(m.apiKey)) return null;
+      return { type: 'testKey', keyId: m.keyId as KeyId, apiKey: m.apiKey };
+    case 'clearCache':
+      return { type: 'clearCache' };
+    case 'clearHistory':
+      return { type: 'clearHistory' };
     case 'getState':
       return { type: 'getState' };
     default:

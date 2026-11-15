@@ -123,6 +123,19 @@ describe('requests', () => {
   });
 });
 
+describe('UI support requests', () => {
+  it('testKey answers keyTest; clearHistory answers cleared', async () => {
+    const h = await makeEngine([fakeAdapter('virustotal').adapter]);
+    const p = fakePort();
+    attachPort(p.port, Promise.resolve(h.engine), EXT_ID);
+    p.send({ type: 'testKey', keyId: 'vt', apiKey: 'some-key-1' });
+    p.send({ type: 'clearHistory' });
+    await vi.waitFor(() => expect(p.sent.filter((m) => m.type !== 'state')).toHaveLength(2));
+    expect(p.sent).toContainEqual({ type: 'keyTest', keyId: 'vt', result: 'ok' });
+    expect(p.sent).toContainEqual({ type: 'cleared', what: 'history' });
+  });
+});
+
 describe('disconnect', () => {
   it('stops sending after the popup closes, and the lookup still completes', async () => {
     let release!: () => void;
@@ -169,6 +182,15 @@ describe('validateRequest', () => {
     [{ type: 'refresh', ioc: { value: 'http://localhost/x', type: 'url' } }, false],
     [{ type: 'refresh', ioc: { value: 'https://evil.example/p?token=1', type: 'url' } }, true],
     [{ type: 'getState' }, true],
+    [{ type: 'open', ioc: { value: 'evil.example', type: 'domain' } }, true],
+    [{ type: 'open', ioc: { value: '127.0.0.1', type: 'ipv4' } }, false],
+    [{ type: 'testKey', keyId: 'vt', apiKey: 'abc123' }, true],
+    [{ type: 'testKey', keyId: 'shodan', apiKey: 'abc123' }, false],
+    [{ type: 'testKey', keyId: 'vt', apiKey: '' }, false],
+    [{ type: 'testKey', keyId: 'vt', apiKey: 'has space' }, false],
+    [{ type: 'testKey', keyId: 'vt', apiKey: 'x'.repeat(513) }, false],
+    [{ type: 'clearCache' }, true],
+    [{ type: 'clearHistory' }, true],
     [{ type: 'deleteEverything' }, false],
     [null, false],
     [[], false],
