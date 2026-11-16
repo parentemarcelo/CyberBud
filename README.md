@@ -76,30 +76,6 @@ npm run test:live   # optional: real API checks with your keys (see tests/fixtur
 
 Extension is under review by Mozilla for public listing. Link will be shared here once validated.
 
-### Build for release (also the build instructions for AMO reviewers)
-
-```sh
-npm ci
-npm run zip
-```
-
-This produces in `.output/`:
-- `cyberbud-<version>-firefox.zip`: the extension
-- `cyberbud-<version>-sources.zip`: the source code for AMO review. It contains only `src/`, `public/`, the configs, `package*.json`, `README.md` and `PRIVACY.md`. Rebuild from it with `npm ci && npm run zip`.
-
-The build is not minified, to keep AMO review readable.
-
-### Sign for self-distribution (unlisted)
-
-Needs AMO API credentials (addons.mozilla.org → Developer Hub → Manage API Keys):
-
-```sh
-npm run zip
-WEB_EXT_API_KEY=<jwt issuer> WEB_EXT_API_SECRET=<jwt secret> npm run sign
-```
-
-The signed `.xpi` is written to `web-ext-artifacts/`.
-
 ## Project layout
 
 ```
