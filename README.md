@@ -74,6 +74,8 @@ npm run check       # types, lint, tests, build, web-ext lint
 npm run test:live   # optional: real API checks with your keys (see tests/fixtures/README.md)
 ```
 
+Extension is under review by Mozilla for public listing. Link will be shared here once validated.
+
 ### Build for release (also the build instructions for AMO reviewers)
 
 ```sh
