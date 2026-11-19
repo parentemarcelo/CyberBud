@@ -62,7 +62,7 @@ Full details: [PRIVACY.md](PRIVACY.md).
 
 No access to the pages you visit (no content scripts, no `<all_urls>`).
 
-## Development
+## Development & Deploy
 
 Requirements: Node.js ≥ 22.12, Firefox ≥ 140.
 
@@ -73,6 +73,8 @@ npm test            # unit and component tests (no network)
 npm run check       # types, lint, tests, build, web-ext lint
 npm run test:live   # optional: real API checks with your keys (see tests/fixtures/README.md)
 ```
+
+Estension is available to install from [addons.mozilla.org](https://addons.mozilla.org/en-US/firefox/addon/cyberbud/).
 
 Extension is under review by Mozilla for public listing. Link will be shared here once validated.
 
